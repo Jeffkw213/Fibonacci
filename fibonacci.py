@@ -20,71 +20,55 @@ sessionData = CachedSession(
         expire_after=300)
 
 
-    
-
-
-Vector = List[float]
-
 
 
 def plot(df):
     df.plot(kind= 'scatter', x='Date', y ='Price')
     plt.show()
     
-def plotOHLC(df):
-    fig = go.Figure(data=go.Ohlc(
-                x=df['Date'],
-                open= df['open'],
-                high= df['high'],
-                low= df['low'],
-                close = df['close']
-            ))
-    fig.show()
     
-def fibonacci(df) -> Vector:
+def fibonacci(df) -> None:
     """
-    Determines the likeliness of buying and selling base on the fibinocci numbers
-    Fibonacci ratios (23.6%, 38.2%, 50%, 61.8%, and 100%) used.
+    Determines the likeliness of buying and selling base on the fibonacci numbers
     
-    uptrend and downtrends
+    Fibonacci retracement is the level on a price chart where the price trajectory is expected to a pullback or stall in its trend.
+    
+    UR = High price - ((High price - Low price) * percentage) in an uptrend market; or
+
+    UR = Low price + ((High price - Low price) * percentage) in a downtrend market
+    
+    Percentage: (38.2%, 50%, 61.8%, and 100%) used.
     
     Args:
         df (pd.DataFrame): a table [date, price]
 
-    Returns:
-        [float, float]: the likeliness of buying and likeliness of selling 
+    Returns: the fibonacci ranges (38.2%, 50%) and (50%, 61.8%)
+        
     """
+    absMin = df["Price"].min()
+    absMax = df["Price"].max()
+    range = [absMin, absMax]
+    _fifty = (absMin + absMax)*.5
     
     
     
-    
-    return [0,0]
+    return True
 
 
 
-# response = sessionData.get(url+"coins/"+str(coin)+"/market_chart", params= params)
-# if response.status_code == 200:
-#     data = response.json()
-#     df = pd.DataFrame(data['prices'])
-#     df.columns = ['Date', 'Price']
-#     df['Date'] = pd.to_datetime(df['Date'],unit='ms')
-    
-    
-#     plot(df)
-#     # fibonacci(df)
-    
-    
-# else:
-#     print(error_500)
-    
-
-getOHLC = sessionData.get(url+"coins/"+str(coin)+"/ohlc", params= params)
-if getOHLC.status_code == 200:
-    data = getOHLC.json()
-    df = pd.DataFrame(data)
-    df.columns = ['Date','open','high', 'low', 'close']
+response = sessionData.get(url+"coins/"+str(coin)+"/market_chart", params= params)
+if response.status_code == 200:
+    data = response.json()
+    df = pd.DataFrame(data['prices'])
+    df.columns = ['Date', 'Price']
     df['Date'] = pd.to_datetime(df['Date'],unit='ms')
-    plotOHLC(df)
-    print(df)
+    
+    print(df['Price'].min())
+    print(df['Price'].max())
+    plot(df)
+    # fibonacci(df)
+    
+    
 else:
     print(error_500)
+    
